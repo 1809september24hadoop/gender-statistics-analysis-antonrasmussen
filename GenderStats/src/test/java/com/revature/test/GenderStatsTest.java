@@ -3,7 +3,7 @@ package com.revature.test;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mrunit.mapreduce.MapDriver;
@@ -15,15 +15,16 @@ import org.junit.Test;
 import com.revature.map.ColumnMapper;
 import com.revature.reduce.ColumnReducer;
 
+
 public class GenderStatsTest {
 
   /*
    * Declare harnesses that let you test a mapper, a reducer, and
    * a mapper and a reducer working together.
    */
-  private MapDriver<LongWritable, Text, Text, IntWritable> mapDriver;
-  private ReduceDriver<Text, IntWritable, Text, IntWritable> reduceDriver;
-  private MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable> mapReduceDriver;
+  private MapDriver<LongWritable, Text, Text, DoubleWritable> mapDriver;
+  private ReduceDriver<Text, DoubleWritable, Text, DoubleWritable> reduceDriver;
+  private MapReduceDriver<LongWritable, Text, Text, DoubleWritable, Text, DoubleWritable> mapReduceDriver;
 
   /*
    * Set up the test. This method will be called before every test.
@@ -35,20 +36,20 @@ public class GenderStatsTest {
      * Set up the mapper test harness.
      */
     ColumnMapper mapper = new ColumnMapper();
-    mapDriver = new MapDriver<LongWritable, Text, Text, IntWritable>();
+    mapDriver = new MapDriver<LongWritable, Text, Text, DoubleWritable>();
     mapDriver.setMapper(mapper);
 
     /*
      * Set up the reducer test harness.
      */
     ColumnReducer reducer = new ColumnReducer();
-    reduceDriver = new ReduceDriver<Text, IntWritable, Text, IntWritable>();
+    reduceDriver = new ReduceDriver<Text, DoubleWritable, Text, DoubleWritable>();
     reduceDriver.setReducer(reducer);
 
     /*
      * Set up the mapper/reducer test harness.
      */
-    mapReduceDriver = new MapReduceDriver<LongWritable, Text, Text, IntWritable, Text, IntWritable>();
+    mapReduceDriver = new MapReduceDriver<LongWritable, Text, Text, DoubleWritable, Text, DoubleWritable>();
     mapReduceDriver.setMapper(mapper);
     mapReduceDriver.setReducer(reducer);
   }
@@ -67,9 +68,9 @@ public class GenderStatsTest {
     /*
      * The expected output is "cat 1", "cat 1", and "dog 1".
      */
-    mapDriver.withOutput(new Text("cat"), new IntWritable(1));
-    mapDriver.withOutput(new Text("cat"), new IntWritable(1));
-    mapDriver.withOutput(new Text("dog"), new IntWritable(1));
+    mapDriver.withOutput(new Text("cat"), new DoubleWritable(1.0));
+    mapDriver.withOutput(new Text("cat"), new DoubleWritable(1.0));
+    mapDriver.withOutput(new Text("dog"), new DoubleWritable(1.0));
 
     /*
      * Run the test.
@@ -83,9 +84,9 @@ public class GenderStatsTest {
   @Test
   public void testReducer() {
 
-    List<IntWritable> values = new ArrayList<IntWritable>();
-    values.add(new IntWritable(1));
-    values.add(new IntWritable(1));
+    List<DoubleWritable> values = new ArrayList<DoubleWritable>();
+    values.add(new DoubleWritable(1.0));
+    values.add(new DoubleWritable(1.0));
 
     /*
      * For this test, the reducer's input will be "cat 1 1".
@@ -95,7 +96,7 @@ public class GenderStatsTest {
     /*
      * The expected output is "cat 2"
      */
-    reduceDriver.withOutput(new Text("cat"), new IntWritable(2));
+    reduceDriver.withOutput(new Text("cat"), new DoubleWritable(2.0));
 
     /*
      * Run the test.
@@ -117,8 +118,8 @@ public class GenderStatsTest {
     /*
      * The expected output (from the reducer) is "cat 2", "dog 1". 
      */
-    mapReduceDriver.addOutput(new Text("cat"), new IntWritable(2));
-    mapReduceDriver.addOutput(new Text("dog"), new IntWritable(1));
+    mapReduceDriver.addOutput(new Text("cat"), new DoubleWritable(2.0));
+    mapReduceDriver.addOutput(new Text("dog"), new DoubleWritable(2.0));
 
     /*
      * Run the test.

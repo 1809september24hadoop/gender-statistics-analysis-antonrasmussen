@@ -2,10 +2,11 @@ package com.revature.map;
 
 import java.io.IOException;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.LongWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
+
 
 /* 
  * To define a map function for your MapReduce job, subclass 
@@ -19,7 +20,8 @@ import org.apache.hadoop.mapreduce.Mapper;
  *   type for the reducer)
  */
 
-public class ColumnMapper extends Mapper<LongWritable, Text, Text, IntWritable> {
+public class ColumnMapper extends Mapper<LongWritable, Text, Text, DoubleWritable> {
+
 
 	/*
 	 * The map method runs once for each line of text in the input file.
@@ -30,27 +32,29 @@ public class ColumnMapper extends Mapper<LongWritable, Text, Text, IntWritable> 
 	public void map(LongWritable key, Text value, Context context)
 			throws IOException, InterruptedException {
 
-		/*
-		 * Convert the line, which is received as a Text object,
-		 * to a String object.
-		 */
-		String row = value.toString();
+		//Filter out Header Row
+		if(!value.toString().contains("Country Name")) {
 
-		/*
-		 * The line.split("\\W+") call uses regular expressions to split the
-		 * line up by non-word characters.
-		 * 
-		 * If you are not familiar with the use of regular expressions in
-		 * Java code, search the web for "Java Regex Tutorial." 
-		 */
-		for (String col : row.split("\",\"")) {
-			if (col.length() > 0) {
+			String[] row = value.toString().trim().split("\",\"");
+			String outputKey = row[0]; // Country Name
+			//String category = row[2]; // Category
+			String indicatorCode = row[3]; // Indicator Code
+			
+			double yearTotals = new Double(0.00);
+			
+			//Considering countries where the percentage of female graduates 
+			//constitutes at least completing upper secondary
+			if(indicatorCode.contains("SE.SEC.CUAT.UP.FE.ZS"))
+			{
+				for (int i = 44; i < 60; i++){
+					if(!row[i].isEmpty())
+					{
+						yearTotals += new Double(row[i]);
 
-				/*
-				 * Call the write method on the Context object to emit a key
-				 * and a value from the map method.
-				 */
-				context.write(new Text(col), new IntWritable(1));
+					}
+				}
+
+				context.write(new Text(outputKey.substring(1)), new DoubleWritable(yearTotals));
 			}
 		}
 	}

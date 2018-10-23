@@ -1,8 +1,10 @@
 package com.revature.reduce;
 
 import java.io.IOException;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 
@@ -17,7 +19,9 @@ import org.apache.hadoop.mapreduce.Reducer;
  *   The data type of the output key
  *   The data type of the output value
  */   
-public class ColumnReducer extends Reducer<Text, IntWritable, Text, IntWritable> {
+public class ColumnReducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
+	
+	NumberFormat formatter = new DecimalFormat("#0.00");
 
 	/*
 	 * The reduce method runs once for each key received from
@@ -26,26 +30,31 @@ public class ColumnReducer extends Reducer<Text, IntWritable, Text, IntWritable>
 	 * IntWritable, and a Context object.
 	 */
 	@Override
-	public void reduce(Text key, Iterable<IntWritable> rows, Context context)
+	public void reduce(Text key, Iterable<DoubleWritable> years, Context context)
 			throws IOException, InterruptedException {
 		
-		int rowCount = 0;
+		double yearTotal = 0;
+		int numOfYears = 0;
 
 		/*
 		 * For each value in the set of values passed to us by the mapper:
 		 */
-		for (IntWritable row : rows) {
-
+		for (DoubleWritable year : years) {
+			
+			numOfYears++;
 			/*
-			 * Add the value to the word count counter for this key.
+			 * Get the sum of each year.
 			 */
-			rowCount += row.get();
+			yearTotal += year.get();
+		}
+		
+		Double average = yearTotal/numOfYears;
+		
+		average = Double.parseDouble(formatter.format(average));
+		
+		if(average < 30 && average != 0){
+			context.write(key, new DoubleWritable(average));
 		}
 
-		/*
-		 * Call the write method on the Context object to emit a key
-		 * and a value from the reduce method. 
-		 */
-		context.write(key, new IntWritable(rowCount));
 	}
 }

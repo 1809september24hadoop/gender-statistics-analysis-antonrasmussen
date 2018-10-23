@@ -1,7 +1,7 @@
 package com.revature;
 
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
@@ -23,6 +23,9 @@ import com.revature.reduce.ColumnReducer;
 public class GenderStats {
 
 	public static void main(String[] args) throws Exception {
+		
+		final String INPUT_FILE = args[0];
+		final String OUTPUT_FILE = args[1];
 
 		/*
 		 * The expected command-line arguments are the paths containing
@@ -57,8 +60,8 @@ public class GenderStats {
 		 * Specify the paths to the input and output data based on the
 		 * command-line arguments.
 		 */
-		FileInputFormat.setInputPaths(job, new Path(args[0]));
-		FileOutputFormat.setOutputPath(job, new Path(args[1]));
+		FileInputFormat.setInputPaths(job, new Path(INPUT_FILE));
+		FileOutputFormat.setOutputPath(job, new Path(OUTPUT_FILE));
 
 		/*
 		 * Specify the mapper and reducer classes.
@@ -92,7 +95,7 @@ public class GenderStats {
 		 * Specify the job's output key and value classes.
 		 */
 		job.setOutputKeyClass(Text.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputValueClass(DoubleWritable.class);
 
 		/*
 		 * Start the MapReduce job and wait for it to finish.
