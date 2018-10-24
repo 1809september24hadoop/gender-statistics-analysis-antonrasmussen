@@ -21,8 +21,7 @@ import org.apache.hadoop.mapreduce.Mapper;
  */
 
 public class Problem1Mapper extends Mapper<LongWritable, Text, Text, DoubleWritable> {
-
-
+	
 	/*
 	 * The map method runs once for each line of text in the input file.
 	 * The method receives a key of type LongWritable, a value of type
@@ -39,8 +38,14 @@ public class Problem1Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			String outputKey = row[0]; // Country Name
 			//String category = row[2]; // Category
 			String indicatorCode = row[3]; // Indicator Code
+			String lastColumn = row[60]; // Last Year Col
 			
-			double yearTotals = new Double(0.00);
+			Double lastColDub = Double.parseDouble(lastColumn.replace("\",", "0"));
+			lastColumn = lastColDub.toString();
+		
+			double yearPercent = new Double(0.00);
+			//TODO: figure out a way to pass numOfYears to reducer for average 
+			//int numOfYears = 0;
 			
 			//Considering countries where the percentage of female graduates 
 			//constitutes at least completing upper secondary
@@ -49,11 +54,25 @@ public class Problem1Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 				for (int i = 4; i < 60; i++){
 					if(!row[i].isEmpty())
 					{
-						yearTotals += new Double(row[i]);
+						//Get most recent year's cumulative %
+						yearPercent = new Double(row[i]);
+						
+						//TODO: It might be more interesting to
+						//Calculate for average over time
+						//yearPercentTotals += new Double(row[i]);
+						//numOfYears++;
+					}
+					//Check for values >= 2 digits and remove the trailing ",
+					if(lastColDub > 0 && lastColumn.length() >= 2){
+						yearPercent = new Double(lastColumn.substring(0, lastColumn.length() - 2));
+					}
+					//Check for values = 1 digit and remove the trailing ",
+					else if(lastColDub > 0) {
+						yearPercent = new Double(lastColumn.substring(0, 2));
 					}
 				}
 
-				context.write(new Text(outputKey.substring(1)), new DoubleWritable(yearTotals));
+				context.write(new Text(outputKey.substring(1)), new DoubleWritable(yearPercent));
 			}
 		}
 	}

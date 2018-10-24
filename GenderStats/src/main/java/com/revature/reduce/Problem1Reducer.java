@@ -22,8 +22,7 @@ import org.apache.hadoop.mapreduce.Reducer;
 public class Problem1Reducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 	
 	NumberFormat formatter = new DecimalFormat("#0.00");
-	static int numOfYears = 0;
-
+	
 	/*
 	 * The reduce method runs once for each key received from
 	 * the shuffle and sort phase of the MapReduce framework.
@@ -31,34 +30,23 @@ public class Problem1Reducer extends Reducer<Text, DoubleWritable, Text, DoubleW
 	 * IntWritable, and a Context object.
 	 */
 	@Override
-	public void reduce(Text key, Iterable<DoubleWritable> years, Context context)
+	public void reduce(Text key, Iterable<DoubleWritable> mostCurrentYear, Context context)
 			throws IOException, InterruptedException {
+		 
+		double currYearPercent = 0;	    
 		
-		double yearTotal = 0;
-	    
-
-		/*
-		 * For each value in the set of values passed to us by the mapper:
-		 */
-		for (DoubleWritable year : years) {
-			
-			// Fix this
-			if(Double.parseDouble(year.toString()) > 0){
-				numOfYears += 1;
-			}
-			/*
-			 * Get the sum of each year.
-			 */
-			yearTotal += year.get();
+		for(DoubleWritable value : mostCurrentYear) {
+			currYearPercent = value.get();
+		}
+				
+		currYearPercent = Double.parseDouble(formatter.format(currYearPercent));
+		
+		//Filter out countries with >= 30% (Cumulative)
+		if(currYearPercent < 30 && currYearPercent != 0){
+			context.write(key, new DoubleWritable(currYearPercent));
 		}
 		
-		Double average = yearTotal/numOfYears;
 		
-		average = Double.parseDouble(formatter.format(average));
-		
-		if(average < 30 && average != 0){
-			context.write(key, new DoubleWritable(average));
-		}
 
 	}
 }
