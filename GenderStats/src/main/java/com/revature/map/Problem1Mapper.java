@@ -42,7 +42,6 @@ public class Problem1Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 
 			String[] row = value.toString().trim().split("\",\"");
 			String outputKey = row[0]; //Country Name
-			//String category = row[2]; //Category
 			String indicatorCode = row[3]; //For filtering
 			String lastColumn = row[60]; //Last Year Col = 2016
 			
