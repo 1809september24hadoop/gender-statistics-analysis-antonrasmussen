@@ -13,8 +13,14 @@ import com.revature.reduce.Problem1Reducer;
 
 public class Problem1 {
 
+
+	public static final String CLASS_NAME = "Problem 1";
+	public static final String USAGE_MESSAGE = "Usage: " 
+			+ CLASS_NAME 
+			+ " <input dir> <output dir>\n";
+
 	public static void main(String[] args) throws Exception {
-		
+
 		final String INPUT_FILE = args[0];
 		final String OUTPUT_FILE = args[1];
 
@@ -24,8 +30,7 @@ public class Problem1 {
 		 * command-line arguments is not exactly 2.
 		 */
 		if (args.length != 2) {
-			System.out.printf(
-					"Usage: Problem1 <input dir> <output dir>\n");
+			System.out.printf(USAGE_MESSAGE);
 			System.exit(-1);
 		}
 
@@ -33,8 +38,8 @@ public class Problem1 {
 		 * Instantiate a Job object the job's configuration.  
 		 */
 		Job job = new Job();
-		job.setJobName("Problem1");
-		
+		job.setJobName(CLASS_NAME);
+
 		/*
 		 * Specifies the jar file that contains the driver, mapper, and reducer.
 		 * 
@@ -53,7 +58,7 @@ public class Problem1 {
 
 		job.setMapperClass(Problem1Mapper.class);
 		job.setReducerClass(Problem1Reducer.class);
-		
+
 		job.setOutputKeyClass(Text.class);
 		job.setOutputValueClass(DoubleWritable.class);
 

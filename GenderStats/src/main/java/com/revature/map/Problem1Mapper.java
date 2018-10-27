@@ -49,8 +49,6 @@ public class Problem1Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			lastColumn = lastColDub.toString();
 		
 			double yearPercent = new Double(0.00);
-			//TODO: figure out a way to pass numOfYears to reducer for average 
-			//int numOfYears = 0;
 			
 			//Considering countries where the percentage of female graduates 
 			//constitutes at least completing upper secondary
