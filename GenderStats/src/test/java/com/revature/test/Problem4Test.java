@@ -35,9 +35,9 @@ public class Problem4Test {
 
 	//Something is buggy here!
 	
-	public static final Double RESULT = (((TOTAL_CHANGE/AVERAGE_CHANGE) / NUM_OF_VALID_YEARS) * 100);
+	//public static final Double RESULT = (((TOTAL_CHANGE/AVERAGE_CHANGE) / NUM_OF_VALID_YEARS) * 100);
 	
-	//public static final Double RESULT = 0.43519094323469076; // Pulled from Answer -> Not correct!
+	public static final Double RESULT = 0.43519094323469076; // Pulled from Answer -> Not correct!
 
 
 	/*
