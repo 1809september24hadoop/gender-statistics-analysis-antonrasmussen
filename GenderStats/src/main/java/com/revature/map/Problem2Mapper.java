@@ -97,6 +97,8 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			
 			//Get weighted average to avoid Simpson's Paradox on Reducer
 			Double annualPercentIncrease = ((totalChange/averageChange) / numOfValidYears) * 100;
+			
+			
 			if(countryCode.equals(COUNTRY_CODE) 
 					&& indicatorCode.contains(INDICATOR_TOKEN) 
 					&& indicatorCode.contains(INDICATOR_GENDER)) {

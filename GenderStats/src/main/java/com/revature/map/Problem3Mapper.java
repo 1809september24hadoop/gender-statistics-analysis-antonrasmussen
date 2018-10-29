@@ -30,7 +30,7 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 	@Override
 	public void map(LongWritable key, Text value, Context context) 
 			throws IOException, InterruptedException {
-		
+
 		int numOfValidYears = 0;
 
 
@@ -39,8 +39,8 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 
 			// Splitting the line on double quote and comma
 			String[] row = value.toString().trim().split(CSV_SPLITTER);
-			
-			
+
+
 			String outputKey = row[0]; //Country Name
 			String indicatorCode = row[3]; //For filtering			
 			String lastColumn = row[LAST_YEAR]; //Last Year Col = 2016
@@ -58,9 +58,7 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 				for (int i = FIRST_YEAR; i < LAST_YEAR; i++){
 					if(!row[i].isEmpty()) {
 						lastValue = new Double(row[i]);
-						if(!row[i].equals("0")) {
-							numOfValidYears += 1;
-						}
+						numOfValidYears += 1;
 					}
 					//Check for values >= 2 digits and remove the trailing ",
 					if(lastColDub > 0 && lastColumn.length() >= 2) {
@@ -72,7 +70,7 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 					}
 				}
 			}
-			
+
 
 
 			//Get the firstValue
@@ -85,23 +83,17 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			}
 
 			//Get the average increase for each category
-			
-			Double annualPercentChange = new Double(0);
+
 			Double totalChange = lastValue - firstValue;
 			Double averageChange = ((lastValue + firstValue) / 2);
-			
+
 			//Get weighted average to avoid Simpson's Paradox on Reducer
 			// and ensure we aren't dividing by 0
-			if(averageChange != 0 && numOfValidYears > 0) {
-				annualPercentChange = ((totalChange/averageChange) / numOfValidYears) * 100;
+			Double annualPercentChange = ((totalChange/averageChange) / numOfValidYears) * 100;
 
-			}
-			else {
-				annualPercentChange = 0.0;
-			}
-			
+
 			//Filter by INDICATOR and filter OUT countries with NO Data
-			if(indicatorCode.contains(INDICATOR) && numOfValidYears > 0) {
+			if(indicatorCode.contains(INDICATOR)) {
 				context.write(new Text(outputKey.substring(1)), new DoubleWritable(annualPercentChange));
 			}
 
