@@ -8,6 +8,7 @@ import org.apache.hadoop.io.DoubleWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
  
+
 public class Problem1Reducer extends Reducer<Text, DoubleWritable, Text, DoubleWritable> {
 	
 	NumberFormat formatter = new DecimalFormat("#0.00");
