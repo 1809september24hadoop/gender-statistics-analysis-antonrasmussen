@@ -23,12 +23,14 @@ public class Problem3Reducer extends Reducer<Text, DoubleWritable, Text, DoubleW
 			throws IOException, InterruptedException {
 
 		double percentChange = 0;
+
 		
 		for(DoubleWritable value : annualPercentChange) {
 			// Get the percentChange for each country
 			percentChange = value.get();
 		}
 		
+
 		percentChange = Double.parseDouble(formatter.format(percentChange));
 
 		context.write(key, new DoubleWritable(percentChange));

@@ -21,7 +21,8 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 	public static final String CSV_LAST_COL = "\",";
 	public static final String REPLACE_WITH = "0";
 
-	public static final String INDICATOR = "SL.EMP.TOTL.SP.MA.ZS"; //Employment to population ratio, 15+, male (%) (modeled ILO estimate)"
+	//Employment to population ratio, 15+, male (%) (modeled ILO estimate)"
+	public static final String INDICATOR = "SL.EMP.TOTL.SP.MA.ZS"; 
 
 	public static final int FIRST_YEAR = 44; // Col = 2000
 	public static final int LAST_YEAR = 60; // Col = 2016
@@ -30,7 +31,7 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 	@Override
 	public void map(LongWritable key, Text value, Context context) 
 			throws IOException, InterruptedException {
-
+		
 		int numOfValidYears = 0;
 
 
@@ -55,18 +56,24 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 
 			//Get the lastValue
 			if(indicatorCode.contains(INDICATOR)) {
-				for (int i = FIRST_YEAR; i < LAST_YEAR; i++){
+				for (int i = FIRST_YEAR; i <= LAST_YEAR; i++){
 					if(!row[i].isEmpty()) {
-						lastValue = new Double(row[i]);
+						if(i == LAST_YEAR) {
+							//Check for values >= 2 digits and remove the trailing ",
+							if(lastColDub > 0 && lastColumn.length() >= 2) {
+								lastValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
+							}
+							//Check for values = 1 digit and remove the trailing ",
+							else if(lastColDub > 0) {
+								lastValue = new Double(lastColumn.substring(0, 2));
+							}
+
+						}
+						else {
+							lastValue = new Double(row[i]);
+						}
 						numOfValidYears += 1;
-					}
-					//Check for values >= 2 digits and remove the trailing ",
-					if(lastColDub > 0 && lastColumn.length() >= 2) {
-						lastValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
-					}
-					//Check for values = 1 digit and remove the trailing ",
-					else if(lastColDub > 0) {
-						lastValue = new Double(lastColumn.substring(0, 2));
+
 					}
 				}
 			}
@@ -75,22 +82,38 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 
 			//Get the firstValue
 			if(indicatorCode.contains(INDICATOR)) {
-				for (int i = LAST_YEAR - 1; i > FIRST_YEAR; --i) {
+				for (int i = LAST_YEAR; i >= FIRST_YEAR; --i) {
 					if(!row[i].isEmpty()) {
-						firstValue = new Double(row[i]);
+						if(i == LAST_YEAR) {
+							//Check for values >= 2 digits and remove the trailing ",
+							if(lastColDub > 0 && lastColumn.length() >= 2) {
+								firstValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
+							}
+							//Check for values = 1 digit and remove the trailing ",
+							else if(lastColDub > 0) {
+								firstValue = new Double(lastColumn.substring(0, 2));
+							}
+						}
+						else {
+							firstValue = new Double(row[i]);
+						}
 					}
 				}
 			}
 
 			//Get the average increase for each category
+			Double annualPercentChange = new Double(0);
 
 			Double totalChange = lastValue - firstValue;
 			Double averageChange = ((lastValue + firstValue) / 2);
 
-			//Get weighted average to avoid Simpson's Paradox on Reducer
-			// and ensure we aren't dividing by 0
-			Double annualPercentChange = ((totalChange/averageChange) / numOfValidYears) * 100;
+			if(averageChange != 0 && numOfValidYears > 0) {
+				annualPercentChange = (totalChange/averageChange);
 
+			}
+			else {
+				annualPercentChange = 0.0;
+			}
 
 			//Filter by INDICATOR and filter OUT countries with NO Data
 			if(indicatorCode.contains(INDICATOR)) {

@@ -35,8 +35,8 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 	@Override
 	public void map(LongWritable key, Text value, Context context) 
 			throws IOException, InterruptedException {
-		
-		
+
+
 		int numOfValidYears = 0;
 
 
@@ -45,8 +45,8 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 
 			// Splitting the line on double quote and comma
 			String[] row = value.toString().trim().split(CSV_SPLITTER);
-			
-			
+
+
 			String outputKey = row[0]; //Country Name
 			String countryCode = row[1]; //For filtering
 			String indicatorCode = row[3]; //For filtering			
@@ -64,18 +64,24 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			if(countryCode.equals(COUNTRY_CODE) 
 					&& indicatorCode.contains(INDICATOR_TOKEN) 
 					&& indicatorCode.contains(INDICATOR_GENDER)) {
-				for (int i = FIRST_YEAR; i < LAST_YEAR; i++){
+				for (int i = FIRST_YEAR; i < LAST_YEAR; i++) {
 					if(!row[i].isEmpty()) {
-						lastValue = new Double(row[i]);
+						if(i == LAST_YEAR) {
+							//Check for values >= 2 digits and remove the trailing ",
+							if(lastColDub > 0 && lastColumn.length() >= 2) {
+								lastValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
+							}
+							//Check for values = 1 digit and remove the trailing ",
+							else if(lastColDub > 0) {
+								lastValue = new Double(lastColumn.substring(0, 2));
+							}
+
+						}
+						else {
+							lastValue = new Double(row[i]);
+
+						}
 						numOfValidYears += 1;
-					}
-					//Check for values >= 2 digits and remove the trailing ",
-					if(lastColDub > 0 && lastColumn.length() >= 2) {
-						lastValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
-					}
-					//Check for values = 1 digit and remove the trailing ",
-					else if(lastColDub > 0) {
-						lastValue = new Double(lastColumn.substring(0, 2));
 					}
 				}
 			}
@@ -84,9 +90,21 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			if(countryCode.equals(COUNTRY_CODE) 
 					&& indicatorCode.contains(INDICATOR_TOKEN) 
 					&& indicatorCode.contains(INDICATOR_GENDER)) {
-				for (int i = LAST_YEAR - 1; i > FIRST_YEAR; --i) {
+				for (int i = LAST_YEAR; i >= FIRST_YEAR; --i) {
 					if(!row[i].isEmpty()) {
-						firstValue = new Double(row[i]);
+						if(i == LAST_YEAR) {
+							//Check for values >= 2 digits and remove the trailing ",
+							if(lastColDub > 0 && lastColumn.length() >= 2) {
+								firstValue = new Double(lastColumn.substring(0, lastColumn.length() - 2));
+							}
+							//Check for values = 1 digit and remove the trailing ",
+							else if(lastColDub > 0) {
+								firstValue = new Double(lastColumn.substring(0, 2));
+							}
+						}
+						else {
+							firstValue = new Double(row[i]);
+						}
 					}
 				}
 			}
@@ -94,11 +112,11 @@ public class Problem2Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			//Get the average increase for each category
 			Double totalChange = lastValue - firstValue;
 			Double averageChange = ((lastValue + firstValue) / 2);
-			
+
 			//Get weighted average to avoid Simpson's Paradox on Reducer
 			Double annualPercentIncrease = ((totalChange/averageChange) / numOfValidYears) * 100;
-			
-			
+
+
 			if(countryCode.equals(COUNTRY_CODE) 
 					&& indicatorCode.contains(INDICATOR_TOKEN) 
 					&& indicatorCode.contains(INDICATOR_GENDER)) {
