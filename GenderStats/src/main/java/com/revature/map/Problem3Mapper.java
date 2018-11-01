@@ -70,7 +70,6 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 							lastValue = new Double(row[i]);
 
 						}
-						numOfValidYears += 1;
 					}
 				}
 			}
