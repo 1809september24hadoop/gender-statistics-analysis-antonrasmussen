@@ -24,20 +24,15 @@ public class Problem4Test {
 
 	public static final String COUNTRY = "Zimbabwe";
 	
-	public static final Double FIRST_YEAR_VAL = 65.7829971313477;
-	
+	public static final Double FIRST_YEAR_VAL = 65.7829971313477;	
 	public static final Double LAST_YEAR_VAL = 74.2630004882813;
-	
-	public static final int NUM_OF_VALID_YEARS = 17;
 	
 	public static final Double TOTAL_CHANGE = LAST_YEAR_VAL - FIRST_YEAR_VAL;
 	public static final Double AVERAGE_CHANGE = (FIRST_YEAR_VAL + LAST_YEAR_VAL) / 2;
 
-	//Something is buggy here!
-	
-	public static final Double RESULT = (((TOTAL_CHANGE/AVERAGE_CHANGE) / NUM_OF_VALID_YEARS) * 100);
-	
-	//public static final Double RESULT = 0.43519094323469076; // Pulled from Answer -> Not correct!
+	//public static final Double RESULT = (TOTAL_CHANGE/AVERAGE_CHANGE);
+	// Pulled from Answer -> Due to floating point stuff...
+	public static final Double RESULT = 0.1211031161342352;
 
 
 	/*

@@ -31,6 +31,9 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 	@Override
 	public void map(LongWritable key, Text value, Context context) 
 			throws IOException, InterruptedException {
+		
+		int numOfValidYears = 0;
+
 
 		//Filter out Header Row
 		if(!value.toString().contains(HEADER_ROW_TOKEN)) {
@@ -68,8 +71,9 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 						}
 						else {
 							lastValue = new Double(row[i]);
-
 						}
+						numOfValidYears += 1;
+
 					}
 				}
 			}
@@ -98,12 +102,18 @@ public class Problem3Mapper extends Mapper<LongWritable, Text, Text, DoubleWrita
 			}
 
 			//Get the average increase for each category
+			Double annualPercentChange = new Double(0);
 
 			Double totalChange = lastValue - firstValue;
 			Double averageChange = ((lastValue + firstValue) / 2);
 
-			Double annualPercentChange = (totalChange/averageChange);
+			if(averageChange != 0 && numOfValidYears > 0) {
+				annualPercentChange = (totalChange/averageChange);
 
+			}
+			else {
+				annualPercentChange = 0.0;
+			}
 
 			//Filter by INDICATOR and filter OUT countries with NO Data
 			if(indicatorCode.contains(INDICATOR)) {

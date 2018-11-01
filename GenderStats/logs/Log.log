@@ -168,3 +168,9 @@
 2018-10-31 22:52:48 ERROR TestDriver:352 - Received unexpected output (Zimbabwe, 0.43519094323469076) at position 0.
 2018-10-31 22:52:48 ERROR TestDriver:352 - Missing expected output (Zimbabwe, 0.7123712713779573) at position 0.
 2018-10-31 22:52:48 ERROR TestDriver:352 - Received unexpected output (Zimbabwe, 0.43519094323469076) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Missing expected output (Zimbabwe, 0.12110311613425274) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Received unexpected output (Zimbabwe, 0.1211031161342352) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Missing expected output (Zimbabwe, 0.12110311613425274) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Received unexpected output (Zimbabwe, 0.1211031161342352) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Missing expected output (Zimbabwe, 0.12110311613425274) at position 0.
+2018-11-01 08:46:07 ERROR TestDriver:352 - Received unexpected output (Zimbabwe, 0.1211031161342352) at position 0.

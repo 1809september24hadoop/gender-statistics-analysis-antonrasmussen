@@ -33,7 +33,7 @@ public class Problem3Test {
 
 	
 	//public static final Double RESULT = (TOTAL_CHANGE/AVERAGE_CHANGE);
-	 // Pulled from Answer -> Due to floating point stuff...
+	// Pulled from Answer -> Due to floating point stuff...
 	public static final Double RESULT = -0.03246627180004357;
 
 
